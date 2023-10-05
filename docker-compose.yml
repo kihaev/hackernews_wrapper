@@ -1,0 +1,30 @@
+version: '3.7'
+networks:
+  internal:
+    driver: bridge
+
+services:
+  api:
+    container_name: test_api
+    build:
+      context: .
+    tty: true
+    volumes:
+      - "./app:/app"
+    networks:
+      - internal
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+  redis:
+    container_name: test_redis
+    image: "redis:latest"
+    volumes:
+      - ${PWD}.data/redis:/data
+    networks:
+      - internal
+    ports:
+      - "6379:6379"

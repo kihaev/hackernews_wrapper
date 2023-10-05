@@ -1,0 +1,4 @@
+aiohttp==3.8.2
+redis
+gunicorn
+python-decouple
