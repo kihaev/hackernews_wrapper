@@ -1,18 +1,22 @@
 FROM python:3.10
 
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 WORKDIR /app
 
 RUN apt-get update
 
 RUN apt-get -y install gcc
 
-COPY requirements.txt /tmp
+COPY pyproject.toml /app/
 
-RUN pip install -r /tmp/requirements.txt
+COPY poetry.lock /app/
+
+RUN pip install poetry && poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
 
 VOLUME [ "/app" ]
 
-EXPOSE 8000
+EXPOSE 8080
 
-EXPOSE 6379
 CMD ["gunicorn", "main:create_app()", "--bind", "0.0.0.0:8080", "--worker-class", "aiohttp.worker.GunicornWebWorker", "--max-requests", "2", "--reload"]
