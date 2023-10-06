@@ -9,7 +9,7 @@ from config import app_config
 async def get_top_stories():
     cached_top_stories = await redis_cache.get("top_stories")
     if cached_top_stories is not None:
-        return cached_top_stories
+        return json.loads(cached_top_stories)
 
     async with aiohttp.ClientSession() as session:
         async with session.get(
@@ -27,7 +27,7 @@ async def get_top_stories():
 
         top_stories.extend(completed_tasks)
 
-    await redis_cache.setx("top_stories", top_stories, 3600)
+    await redis_cache.set("top_stories", top_stories, 3600)
 
     return top_stories
 
@@ -40,6 +40,6 @@ async def fetch_story_data(session, story_id):
         return {
             "id": story.get("id"),
             "title": story.get("title"),
-            "text": story.get("text"),
+            "url": story.get("url"),
             "time": story.get("time"),
         }

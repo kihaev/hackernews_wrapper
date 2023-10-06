@@ -26,10 +26,10 @@ class RedisCache:
 
     async def get(self, key):
         res = await self.redis_pool.get(key)
-        return json.loads(res)
+        return res
 
-    async def setx(self, key, value, seconds):
-        await self.redis_pool.setx(key, json.dumps(value), seconds)
+    async def set(self, key, value, seconds):
+        await self.redis_pool.set(key, json.dumps(value), seconds)
 
 
 redis_cache = RedisCache(None)
